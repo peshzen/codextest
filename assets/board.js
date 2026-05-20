@@ -125,4 +125,11 @@ els.clearFilters.addEventListener("click", () => {
   render();
 });
 
+const params = new URLSearchParams(window.location.search);
+const initialAssignee = params.get("assignee");
+if (initialAssignee) {
+  state.filter.assignee = initialAssignee;
+  els.inputs.fAssignee.value = initialAssignee;
+}
+
 render();
