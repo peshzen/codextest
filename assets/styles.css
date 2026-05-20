@@ -105,3 +105,12 @@ button.tiny:hover { background: #eef2ff; }
 :root[data-theme="dark"] .column[data-status="review"] h3 { color: #fcd34d; }
 :root[data-theme="dark"] .column[data-status="done"] { background: #10261a; border-color: #166534; }
 :root[data-theme="dark"] .column[data-status="done"] h3 { color: #86efac; }
+
+
+.summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; margin-top: 12px; }
+.summary-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 12px; }
+.summary-card header { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
+.summary-card h3 { margin: 0; }
+.summary-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.summary-list li { display: flex; align-items: center; justify-content: space-between; color: var(--muted); }
+.summary-list li.total { color: var(--text); border-top: 1px solid var(--border); margin-top: 6px; padding-top: 6px; font-weight: 700; }

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dev Kanban — Dashboard</title>
+  <link rel="stylesheet" href="assets/styles.css"/>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <script src="assets/theme.js"></script>
+</head>
+<body class="bg">
+  <header class="topbar">
+    <div class="left">
+      <img src="assets/logo.svg" alt="" class="logo small"/>
+      <strong>Dev Kanban</strong>
+      <nav>
+        <a href="board.html">Board</a>
+        <a class="active" href="dashboard.html">Dashboard</a>
+        <a href="settings.html">Settings</a>
+        <a href="about.html">About</a>
+      </nav>
+    </div>
+    <div class="right">
+      <span id="currentUser" class="chip"></span>
+      <button id="logoutBtn" class="btn subtle">Log out</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <h2>Task Summary by Assignee</h2>
+      <p class="muted">Each card shows task counts by status. Use links to open the board pre-filtered by assignee.</p>
+      <div id="summaryCards" class="summary-grid"></div>
+    </section>
+  </main>
+
+  <template id="summaryCardTemplate">
+    <article class="summary-card">
+      <header>
+        <h3 class="assignee-name"></h3>
+        <a class="btn subtle board-link" href="#">Open board</a>
+      </header>
+      <ul class="summary-list">
+        <li><span>Backlog</span><strong class="count-backlog">0</strong></li>
+        <li><span>In Progress</span><strong class="count-inprogress">0</strong></li>
+        <li><span>Review</span><strong class="count-review">0</strong></li>
+        <li><span>Done</span><strong class="count-done">0</strong></li>
+        <li class="total"><span>Total</span><strong class="count-total">0</strong></li>
+      </ul>
+    </article>
+  </template>
+
+  <script src="assets/auth.js"></script>
+  <script src="assets/storage.js"></script>
+  <script src="assets/dashboard.js"></script>
+</body>
+</html>
