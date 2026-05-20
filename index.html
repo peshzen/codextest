@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dev Kanban — Login</title>
+  <link rel="stylesheet" href="assets/styles.css"/>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <script src="assets/theme.js"></script>
+</head>
+<body class="bg">
+  <main class="container narrow">
+    <header class="center">
+      <img src="assets/logo.svg" alt="Dev Kanban" class="logo"/>
+      <h1>Dev Kanban</h1>
+      <p class="muted">Lightweight task board for teams — no servers, no databases.</p>
+    </header>
+
+    <section class="card">
+      <h2>Login</h2>
+      <form id="loginForm">
+        <label>
+          Email
+          <input type="email" id="email" placeholder="dev@team.com" required>
+        </label>
+        <label>
+          Password
+          <input type="password" id="password" placeholder="••••••••" required>
+        </label>
+        <button type="submit" class="btn">Sign in</button>
+        <p class="muted small">Demo users: <code>alice@dev.io</code> / <code>bob@dev.io</code> (any password)</p>
+      </form>
+    </section>
+
+    <footer class="center muted small">
+      <a href="about.html">About</a>
+      &middot;
+      <a href="privacy.html">Privacy</a>
+    </footer>
+  </main>
+
+  <script src="assets/auth.js"></script>
+  <script>
+    document.getElementById("loginForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+      window.Auth.login(email, password)
+        .then(() => window.location.href = "board.html")
+        .catch(err => alert(err.message));
+    });
+  </script>
+</body>
+</html>

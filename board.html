@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dev Kanban — Board</title>
+  <link rel="stylesheet" href="assets/styles.css"/>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <script src="assets/theme.js"></script>
+</head>
+<body class="bg">
+  <header class="topbar">
+    <div class="left">
+      <img src="assets/logo.svg" alt="" class="logo small"/>
+      <strong>Dev Kanban</strong>
+      <nav>
+        <a class="active" href="board.html">Board</a>
+        <a href="settings.html">Settings</a>
+        <a href="about.html">About</a>
+      </nav>
+    </div>
+    <div class="right">
+      <span id="currentUser" class="chip"></span>
+      <button id="logoutBtn" class="btn subtle">Log out</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="toolbar card">
+      <form id="newTaskForm" class="row gap">
+        <input id="titleInput" class="flex" placeholder="New task title (e.g., Implement auth)"/>
+        <select id="assigneeInput">
+          <option value="">Assignee</option>
+          <option>Alice</option>
+          <option>Bob</option>
+          <option>Carol</option>
+        </select>
+        <select id="priorityInput">
+          <option value="">Priority</option>
+          <option>Low</option>
+          <option>Medium</option>
+          <option>High</option>
+        </select>
+        <input id="tagsInput" placeholder="#tags (space-separated)"/>
+        <button class="btn">Add</button>
+      </form>
+
+      <div class="row gap wrap">
+        <select id="filterAssignee">
+          <option value="">All assignees</option>
+          <option>Alice</option>
+          <option>Bob</option>
+          <option>Carol</option>
+        </select>
+        <select id="filterPriority">
+          <option value="">All priorities</option>
+          <option>Low</option>
+          <option>Medium</option>
+          <option>High</option>
+        </select>
+        <button id="clearFilters" class="btn subtle">Clear filters</button>
+      </div>
+    </section>
+
+    <section id="board" class="board">
+      <div class="column" data-status="backlog">
+        <h3>Backlog</h3>
+        <div class="dropzone" id="col-backlog"></div>
+      </div>
+
+      <div class="column" data-status="inprogress">
+        <h3>In Progress</h3>
+        <div class="dropzone" id="col-inprogress"></div>
+      </div>
+
+      <div class="column" data-status="review">
+        <h3>Review</h3>
+        <div class="dropzone" id="col-review"></div>
+      </div>
+
+      <div class="column" data-status="done">
+        <h3>Done</h3>
+        <div class="dropzone" id="col-done"></div>
+      </div>
+    </section>
+  </main>
+
+  <template id="taskTemplate">
+    <article class="task" draggable="true">
+      <header class="task-head">
+        <span class="priority"></span>
+        <span class="title"></span>
+      </header>
+      <div class="task-body">
+        <div class="meta">
+          <span class="assignee chip"></span>
+          <span class="tags"></span>
+        </div>
+      </div>
+      <footer class="task-foot">
+        <button class="tiny move-left" title="Move left">◀</button>
+        <button class="tiny move-right" title="Move right">▶</button>
+        <button class="tiny delete" title="Delete">✕</button>
+      </footer>
+    </article>
+  </template>
+
+  <script src="assets/auth.js"></script>
+  <script src="assets/storage.js"></script>
+  <script src="assets/board.js"></script>
+</body>
+</html>

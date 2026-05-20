@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dev Kanban — Settings</title>
+  <link rel="stylesheet" href="assets/styles.css"/>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <script src="assets/theme.js"></script>
+</head>
+<body class="bg">
+  <header class="topbar">
+    <div class="left">
+      <img src="assets/logo.svg" alt="" class="logo small"/>
+      <strong>Dev Kanban</strong>
+      <nav>
+        <a href="board.html">Board</a>
+        <a class="active" href="settings.html">Settings</a>
+        <a href="about.html">About</a>
+      </nav>
+    </div>
+    <div class="right">
+      <span id="currentUser" class="chip"></span>
+      <button id="logoutBtn" class="btn subtle">Log out</button>
+    </div>
+  </header>
+
+  <main class="container narrow">
+    <section class="card">
+      <h2>Theme</h2>
+      <p class="muted">Switch between light and dark modes.</p>
+      <div class="row gap">
+        <label class="row gap">
+          <input type="radio" name="theme" value="light"> Light
+        </label>
+        <label class="row gap">
+          <input type="radio" name="theme" value="dark"> Dark
+        </label>
+        <button id="toggleBtn" class="btn subtle">Toggle</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="assets/auth.js"></script>
+  <script>
+    Auth.requireLogin();
+    document.getElementById("currentUser").textContent = Auth.currentUser()?.email || "";
+    document.getElementById("logoutBtn").onclick = () => { Auth.logout(); location.href = "index.html"; };
+
+    const current = Theme.get();
+    const radios = document.querySelectorAll('input[name="theme"]');
+    radios.forEach(r => r.checked = (r.value === current));
+    radios.forEach(r => r.addEventListener('change', () => Theme.set(r.value)));
+    document.getElementById("toggleBtn").onclick = () => Theme.toggle();
+  </script>
+</body>
+</html>
