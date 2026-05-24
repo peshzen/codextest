@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dev Kanban — Create Report</title>
+  <link rel="stylesheet" href="assets/styles.css"/>
+  <script src="assets/theme.js"></script>
+</head>
+<body class="bg">
+<header class="topbar"><div class="left"><strong>Create Report</strong></div><div class="right"><a href="dashboard.html" class="btn subtle">Back</a></div></header>
+<main class="container narrow">
+  <section class="card">
+    <h2>Property Address</h2>
+    <div id="addressAutocompleteHost"></div>
+    <label>Manual address input</label>
+    <input id="manualAddress" placeholder="Start typing an address…" />
+    <div id="selectedAddressMeta" class="muted small"></div>
+    <div id="mapPreview" class="card"></div>
+    <button id="generateReportBtn" class="btn">Generate Report</button>
+    <p id="reportStatus" class="muted"></p>
+  </section>
+</main>
+<script src="assets/storage.js"></script>
+<script src="assets/report.js"></script>
+</body>
+</html>
