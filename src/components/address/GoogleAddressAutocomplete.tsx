@@ -1,12 +1,12 @@
 export type SelectedAddress = {
   formattedAddress: string;
-  streetAddress: string;
+  street: string;
   city: string;
   county: string;
   state: string;
   zip: string;
-  latitude: number | null;
-  longitude: number | null;
+  lat: number | null;
+  lng: number | null;
   placeId: string;
 };
 

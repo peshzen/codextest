@@ -38,3 +38,7 @@ python3 serve.py
    - Never expose this key in browser code.
 
 These restrictions follow Google Maps Platform security best practices to reduce unauthorized usage and billing abuse.
+
+7. Add `GOOGLE_MAPS_API_KEY` to Netlify site environment variables (Site configuration → Environment variables).
+8. Redeploy the site after adding or changing environment variables.
+9. Use proper API key restrictions for browser and server keys to avoid REQUEST_DENIED errors.
