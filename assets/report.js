@@ -1,5 +1,11 @@
 window.ReportPage = (() => {
-  const state = { selectedPlace: null };
+  const state = { selectedPlace: null, geocodeError: null };
+
+  const isDev = ['localhost', '127.0.0.1'].includes(window.location.hostname);
+
+  function devLog(...args) {
+    if (isDev) console.log('[geocode]', ...args);
+  }
 
   function loadGoogleMaps(apiKey) {
     return new Promise((resolve, reject) => {
@@ -21,15 +27,15 @@ window.ReportPage = (() => {
     const comps = Object.fromEntries((place.address_components || []).flatMap(c => c.types.map(t => [t, c.long_name])));
     const short = Object.fromEntries((place.address_components || []).flatMap(c => c.types.map(t => [t, c.short_name])));
     return {
-      formatted_address: place.formatted_address || '',
-      street_address: `${comps.street_number || ''} ${comps.route || ''}`.trim(),
+      formattedAddress: place.formatted_address || '',
+      street: `${comps.street_number || ''} ${comps.route || ''}`.trim(),
       city: comps.locality || comps.sublocality || '',
       county: comps.administrative_area_level_2 || '',
       state: short.administrative_area_level_1 || comps.administrative_area_level_1 || '',
       zip: comps.postal_code || '',
-      latitude: place.geometry?.location?.lat?.() ?? null,
-      longitude: place.geometry?.location?.lng?.() ?? null,
-      place_id: place.place_id || ''
+      lat: place.geometry?.location?.lat?.() ?? null,
+      lng: place.geometry?.location?.lng?.() ?? null,
+      placeId: place.place_id || ''
     };
   }
 
@@ -50,9 +56,9 @@ window.ReportPage = (() => {
         const place = ac.getPlace();
         const parsed = parsePlace(place);
         state.selectedPlace = parsed;
-        document.getElementById('manualAddress').value = parsed.formatted_address;
-        document.getElementById('selectedAddressMeta').textContent = `${parsed.city}, ${parsed.state} ${parsed.zip} | lat: ${parsed.latitude} lng: ${parsed.longitude}`;
-        renderMapPreview(parsed.latitude, parsed.longitude);
+        document.getElementById('manualAddress').value = parsed.formattedAddress;
+        document.getElementById('selectedAddressMeta').textContent = `${parsed.city}, ${parsed.state} ${parsed.zip} | lat: ${parsed.lat} lng: ${parsed.lng}`;
+        renderMapPreview(parsed.lat, parsed.lng);
       });
       document.getElementById('clearAddress').onclick = () => { input.value = ''; state.selectedPlace = null; };
       document.getElementById('fallbackManual').onclick = () => { input.value = ''; input.blur(); };
@@ -74,21 +80,80 @@ window.ReportPage = (() => {
   async function generateReport() {
     const status = document.getElementById('reportStatus');
     const rawAddress = document.getElementById('manualAddress').value.trim();
-    const payload = state.selectedPlace || { formatted_address: rawAddress };
-    if (!payload.latitude && rawAddress) {
+    const payload = state.selectedPlace || { formattedAddress: rawAddress };
+    state.geocodeError = null;
+
+    if (!payload.lat && rawAddress) {
+      const endpoint = '/.netlify/functions/geocode-address';
+      const sanitizedAddress = rawAddress.replace(/\s+/g, ' ').trim();
+      devLog('request endpoint', endpoint);
+      devLog('sanitized address', sanitizedAddress);
+
       try {
-        const res = await fetch('/.netlify/functions/geocode-address', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({address: rawAddress}) });
-        if (res.ok) Object.assign(payload, await res.json());
-      } catch {}
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ address: sanitizedAddress })
+        });
+        const data = await res.json();
+        devLog('status', data.googleStatus || (data.success ? 'OK' : 'UNKNOWN_ERROR'));
+
+        if (res.ok && data.success) {
+          Object.assign(payload, data);
+        } else {
+          state.geocodeError = data;
+          devLog('error details', {
+            error: data.error,
+            googleStatus: data.googleStatus,
+            googleErrorMessage: data.googleErrorMessage,
+            debugHint: data.debugHint
+          });
+        }
+      } catch (error) {
+        state.geocodeError = {
+          error: 'Google geocoding failed',
+          googleStatus: 'UNKNOWN_ERROR',
+          googleErrorMessage: error?.message || 'Network error',
+          debugHint: 'Check function logs and network connectivity.'
+        };
+        devLog('error details', state.geocodeError);
+      }
     }
-    if (!payload.formatted_address) return status.textContent = 'Address is required.';
+
+    const resolvedAddress = payload.formattedAddress || payload.formatted_address || rawAddress;
+    if (!resolvedAddress) return (status.textContent = 'Address is required.');
+
     const key = Storage.getGoogleMapsApiKey();
-    const streetView = payload.latitude && payload.longitude && key
-      ? `https://maps.googleapis.com/maps/api/streetview?size=800x450&location=${payload.latitude},${payload.longitude}&key=${encodeURIComponent(key)}`
+    const streetView = payload.lat && payload.lng && key
+      ? `https://maps.googleapis.com/maps/api/streetview?size=800x450&location=${payload.lat},${payload.lng}&key=${encodeURIComponent(key)}`
       : '';
-    const report = { id: crypto.randomUUID(), address: payload.formatted_address, ...payload, main_image_url: streetView, created_at: new Date().toISOString() };
+
+    const report = {
+      id: crypto.randomUUID(),
+      address: resolvedAddress,
+      formattedAddress: resolvedAddress,
+      street: payload.street || '',
+      city: payload.city || '',
+      county: payload.county || '',
+      state: payload.state || '',
+      zip: payload.zip || '',
+      lat: payload.lat ?? null,
+      lng: payload.lng ?? null,
+      placeId: payload.placeId || '',
+      geocodeVerified: !state.geocodeError,
+      geocodeError: state.geocodeError,
+      main_image_url: streetView,
+      created_at: new Date().toISOString()
+    };
+
     Storage.saveReport(report);
-    status.textContent = 'Report generated successfully.';
+
+    if (state.geocodeError) {
+      const details = [state.geocodeError.error, state.geocodeError.debugHint].filter(Boolean).join(' ');
+      status.textContent = `Address could not be verified. Report will be generated with limited location data. ${details}`.trim();
+    } else {
+      status.textContent = 'Report generated successfully.';
+    }
   }
 
   document.getElementById('generateReportBtn').onclick = generateReport;
