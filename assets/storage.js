@@ -2,6 +2,8 @@
 window.Storage = (() => {
   const KEY = "kanban.tasks.v1";      // canonical key
   const OLD_KEY = "kanban.task.v1";   // legacy (buggy) key
+  const PROFILE_KEY = "kanban.profile.v1";
+  const REPORTS_KEY = "kanban.reports.v1";
 
   function sampleTasks() {
     return [
@@ -31,5 +33,26 @@ window.Storage = (() => {
 
   function saveTasks(tasks) { localStorage.setItem(KEY, JSON.stringify(tasks || [])); }
 
-  return { loadTasks, saveTasks, sampleTasks };
+  function loadProfile() {
+    try { return JSON.parse(localStorage.getItem(PROFILE_KEY) || "{}"); } catch { return {}; }
+  }
+
+  function saveProfile(profile) { localStorage.setItem(PROFILE_KEY, JSON.stringify(profile || {})); }
+
+  function getGoogleMapsApiKey() {
+    const p = loadProfile();
+    return p.google_maps_api_key || p.google_maps_api_key_encrypted || window.VITE_GOOGLE_MAPS_API_KEY || "";
+  }
+
+  function loadReports() {
+    try { return JSON.parse(localStorage.getItem(REPORTS_KEY) || "[]"); } catch { return []; }
+  }
+
+  function saveReport(report) {
+    const reports = loadReports();
+    reports.unshift(report);
+    localStorage.setItem(REPORTS_KEY, JSON.stringify(reports));
+  }
+
+  return { loadTasks, saveTasks, sampleTasks, loadProfile, saveProfile, getGoogleMapsApiKey, loadReports, saveReport };
 })();

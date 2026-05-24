@@ -40,9 +40,22 @@
         <button id="toggleBtn" class="btn subtle">Toggle</button>
       </div>
     </section>
+
+    <section class="card">
+      <h2>Google Maps</h2>
+      <p class="muted">Configure your Google Maps API key for address autocomplete and report geocoding.</p>
+      <label for="googleMapsApiKey">Google Maps API Key</label>
+      <div class="row gap stack-mobile">
+        <input id="googleMapsApiKey" type="password" placeholder="AIza..." autocomplete="off" />
+        <button id="saveGoogleMapsKeyBtn" class="btn">Save Key</button>
+        <button id="testGoogleMapsKeyBtn" class="btn subtle">Test connection</button>
+      </div>
+      <p id="googleMapsKeyStatus" class="muted"></p>
+    </section>
   </main>
 
   <script src="assets/auth.js"></script>
+  <script src="assets/storage.js"></script>
   <script>
     Auth.requireLogin();
     document.getElementById("currentUser").textContent = Auth.currentUser()?.email || "";
@@ -53,6 +66,62 @@
     radios.forEach(r => r.checked = (r.value === current));
     radios.forEach(r => r.addEventListener('change', () => Theme.set(r.value)));
     document.getElementById("toggleBtn").onclick = () => Theme.toggle();
+
+    const keyInput = document.getElementById("googleMapsApiKey");
+    const saveBtn = document.getElementById("saveGoogleMapsKeyBtn");
+    const testBtn = document.getElementById("testGoogleMapsKeyBtn");
+    const statusEl = document.getElementById("googleMapsKeyStatus");
+
+    function showStatus(message, tone = "muted") {
+      statusEl.textContent = message;
+      statusEl.className = tone === "error" ? "danger" : tone === "success" ? "success" : "muted";
+    }
+
+    function maskKey(value) {
+      if (!value || value.length < 8) return "••••••••";
+      return `${value.slice(0, 4)}${"•".repeat(Math.max(4, value.length - 8))}${value.slice(-4)}`;
+    }
+
+    const existing = Storage.loadProfile();
+    const storedKey = existing.google_maps_api_key_encrypted || existing.google_maps_api_key || "";
+    if (storedKey) {
+      keyInput.value = maskKey(storedKey);
+      keyInput.dataset.hasStoredKey = "true";
+    }
+
+    saveBtn.onclick = () => {
+      const value = keyInput.value.trim();
+      if (!value || value.includes("•")) {
+        showStatus("Enter a valid Google Maps API key before saving.", "error");
+        return;
+      }
+      Storage.saveProfile({
+        ...Storage.loadProfile(),
+        google_maps_api_key: value,
+        google_maps_api_key_encrypted: value
+      });
+      keyInput.value = maskKey(value);
+      keyInput.dataset.hasStoredKey = "true";
+      showStatus("Google Maps API key saved.", "success");
+    };
+
+    testBtn.onclick = async () => {
+      const profile = Storage.loadProfile();
+      const key = (!keyInput.value.includes("•") ? keyInput.value.trim() : "") || profile.google_maps_api_key || profile.google_maps_api_key_encrypted;
+      if (!key) {
+        showStatus("No key available. Save your key first.", "error");
+        return;
+      }
+      showStatus("Testing Google Maps connection...");
+      try {
+        const res = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent("1600 Amphitheatre Pkwy, Mountain View, CA")}&key=${encodeURIComponent(key)}`);
+        const data = await res.json();
+        if (res.ok && data.status === "OK") showStatus("Connection successful. Google Maps API is working.", "success");
+        else showStatus(`Connection failed: ${data.error_message || data.status || "Unknown error"}`, "error");
+      } catch (err) {
+        showStatus(`Connection failed: ${err.message}`, "error");
+      }
+    };
   </script>
 </body>
 </html>

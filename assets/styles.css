@@ -19,6 +19,8 @@ html, body { margin: 0; padding: 0; font-family: ui-sans-serif, system-ui, -appl
 
 .center { text-align: center; }
 .muted { color: var(--muted); }
+.success { color: #15803d; }
+.danger { color: #b91c1c; }
 .small { font-size: 0.9rem; }
 .row { display: flex; align-items: center; }
 .wrap { flex-wrap: wrap; }
@@ -78,6 +80,7 @@ button.tiny:hover { background: #eef2ff; }
 }
 @media (max-width: 640px) {
   .board { grid-template-columns: 1fr; }
+  .stack-mobile { flex-direction: column; align-items: stretch; }
 }
 
 /* Dark theme overrides */
