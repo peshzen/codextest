@@ -47,6 +47,32 @@ input:focus, select:focus { outline: 2px solid #cde2ff; border-color: #cde2ff; }
 .logo.small { width: 28px; height: 28px; }
 .chip { background: var(--chip); border: 1px solid #cfe9ff; padding: 4px 10px; border-radius: 999px; }
 
+.user-menu { position: relative; }
+.user-menu summary { list-style: none; }
+.user-menu summary::-webkit-details-marker { display: none; }
+.user-menu .menu-items {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 6px);
+  min-width: 170px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  padding: 6px;
+  display: none;
+  z-index: 20;
+}
+.user-menu[open] .menu-items { display: grid; gap: 4px; }
+.user-menu .menu-items a {
+  color: var(--text);
+  text-decoration: none;
+  padding: 8px 10px;
+  border-radius: 8px;
+}
+.user-menu .menu-items a:hover { background: var(--chip); }
+
+
 .toolbar input, .toolbar select { min-width: 140px; }
 
 .board { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 12px; }
@@ -120,6 +146,11 @@ button.tiny:hover { background: #eef2ff; }
     align-items: center;
     gap: 8px;
     flex-wrap: wrap;
+  }
+
+  .user-menu .menu-items {
+    right: auto;
+    left: 0;
   }
 
   .topbar .chip {

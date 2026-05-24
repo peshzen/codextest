@@ -1,7 +1,7 @@
 Auth.requireLogin();
 
 document.getElementById("currentUser").textContent = Auth.currentUser()?.email || "";
-document.getElementById("logoutBtn").onclick = () => { Auth.logout(); location.href = "index.html"; };
+document.getElementById("logoutLink").onclick = (e) => { e.preventDefault(); Auth.logout(); location.href = "index.html"; };
 
 const STATUS_ORDER = ["backlog", "inprogress", "review", "done"];
 const DEFAULT_LABEL = "Unassigned";

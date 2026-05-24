@@ -3,7 +3,7 @@ Auth.requireLogin();
 
 const currentUser = Auth.currentUser();
 document.getElementById("currentUser").textContent = currentUser?.email || "";
-document.getElementById("logoutBtn").onclick = () => { Auth.logout(); location.href = "index.html"; };
+document.getElementById("logoutLink").onclick = (e) => { e.preventDefault(); Auth.logout(); location.href = "index.html"; };
 
 const state = { tasks: [], filter: { assignee: "", priority: "" } };
 

@@ -22,7 +22,14 @@
     </div>
     <div class="right">
       <span id="currentUser" class="chip"></span>
-      <button id="logoutBtn" class="btn subtle">Log out</button>
+      <details class="user-menu">
+        <summary class="btn subtle">Account ▾</summary>
+        <div class="menu-items">
+          <a href="settings.html#profile">Profile</a>
+          <a href="settings.html">Settings</a>
+          <a href="#" id="logoutLink">Log out</a>
+        </div>
+      </details>
     </div>
   </header>
 
