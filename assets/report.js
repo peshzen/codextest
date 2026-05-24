@@ -37,7 +37,7 @@ window.ReportPage = (() => {
     const host = document.getElementById('addressAutocompleteHost');
     const key = Storage.getGoogleMapsApiKey();
     if (!key) {
-      host.innerHTML = '<p class="muted">Google key missing. Use manual address input.</p>';
+      host.innerHTML = '<p class="muted">Google key missing. Open <a href="settings.html">Profile &amp; Settings</a> to add it, or use manual address input.</p>';
       return;
     }
     host.innerHTML = '<p class="muted">Loading Google Places…</p>';

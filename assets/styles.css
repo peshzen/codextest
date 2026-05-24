@@ -83,6 +83,50 @@ button.tiny:hover { background: #eef2ff; }
   .stack-mobile { flex-direction: column; align-items: stretch; }
 }
 
+
+@media (max-width: 640px) {
+  .topbar {
+    position: static;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    padding: 10px 12px;
+  }
+
+  .topbar .left,
+  .topbar .right {
+    width: 100%;
+  }
+
+  .topbar .left {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .topbar nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    width: 100%;
+  }
+
+  .topbar nav a {
+    margin: 0;
+  }
+
+  .topbar .right {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .topbar .chip {
+    overflow-wrap: anywhere;
+  }
+}
+
 /* Dark theme overrides */
 :root[data-theme="dark"] {
   --bg: #0b1220;
